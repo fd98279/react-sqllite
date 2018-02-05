@@ -6,7 +6,12 @@ var app = express();
 var bodyParser = require('body-parser')
 var sqlite3 = require('sqlite3').verbose();
 
-var db = new sqlite3.Database('data/demodb02');
+const path = require('path')
+const dbPath = path.resolve(__dirname, 'data\\demodb01')
+process.chdir(path.resolve(__dirname));
+const db = new sqlite3.Database(dbPath)
+
+
 var responseMessage = null;
 //create application/json parser
 var jsonParser = bodyParser.json();
@@ -15,6 +20,13 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 app.use(urlencodedParser);
 app.use(jsonParser);
+
+app.use(function(req, res, next) {
+	  res.header("Access-Control-Allow-Origin", "*");
+	  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+	  next();
+});
 
 
 var sendError = function(res, message)
